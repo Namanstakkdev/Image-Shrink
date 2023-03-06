@@ -1,0 +1,15 @@
+{
+  "name": "image-shrink",
+  "version": "1.0.0",
+  "description": "App Based on Electron Js To Shrink Images",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Naman Kumar",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^23.1.2"
+  }
+}
