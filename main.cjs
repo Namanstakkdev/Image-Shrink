@@ -1,13 +1,14 @@
 const { app, BrowserWindow, Menu, ipcMain, shell } =require('electron')
+const { homedir } =require('os') 
+const { join } =require("path")
+const imagemin = require("imagemin")
+const imageminMozjpeg =require( 'imagemin-mozjpeg')
+const imageminPngquant =require('imagemin-pngquant')
+const slash =require('slash')
+const log = require('electron-log')
 
-const os =require('os') 
-const path = require("path")
-const imagemin = require ('imagemin')
-const imageminMozjpeg = require ('imagemin-mozjpeg')
-const imageminPngquant = require ('imagemin-pngquant')
-const slash= require('slash')
+process.env.NODE_ENV='production'
 
-process.env.NODE_ENV='development'
 const isDev= process.env.NODE_ENV !=='production' ? true: false
 const isMac= process.platform === 'darwin' ? true: false
 console.log(process.platform)
@@ -21,7 +22,8 @@ function createAboutWindow(){
         width: 300,
         height: 300,
         icon: `${__dirname}/assets/icons/icon.png`,
-        resizable: false
+        resizable: false,
+        backgroundColor:'white'
     })
     mainWindow.loadFile(`${__dirname}/app/about.html`)
 }
@@ -36,6 +38,7 @@ function createMainWindow(){
         backgroundColor:'white',
         webPreferences:{
             nodeIntegration: true,
+            contextIsolation: false
         }
     })
     if(isDev){
@@ -43,29 +46,6 @@ function createMainWindow(){
     }
     // mainWindow.loadURL(`file://${__dirname}/app/index.html`)
     mainWindow.loadFile(`${__dirname}/app/index.html`)
-
-}
-
-
-function createMainWindow() {
-  mainWindow = new BrowserWindow({
-    title: 'ImageShrink',
-    width: isDev ? 800 : 500,
-    height: 600,
-    icon: `${__dirname}/assets/icons/Icon_256x256.png`,
-    resizable: isDev ? true : false,
-    backgroundColor: 'white',
-    webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false
-    },
-  })
-
-  if (isDev) {
-    mainWindow.webContents.openDevTools()
-  }
-
-  mainWindow.loadFile('./app/index.html')
 }
 
 
@@ -80,7 +60,7 @@ function createHelpWindow(){
     mainWindow.loadFile(`${__dirname}/app/help.html`)
 }
 
-// app.disableHardwareAcceleration()
+app.disableHardwareAcceleration()
 // Handling WebGL
 
 app.on('ready', () => {
@@ -96,8 +76,9 @@ app.on('ready', () => {
   })
 
 ipcMain.on('image:minimize',(e, options)=>{
-    options.dest=path.join(os.homedir(),'imageshrink')
+    options.dest=join(homedir(),'imageshrink')
     shrinkImage(options)
+    // console.log(options)
 })
 
 async function shrinkImage({imgPath, quality, dest}){
@@ -112,10 +93,13 @@ async function shrinkImage({imgPath, quality, dest}){
                 })
             ]
         })
-        console.log(files)
-        // shell.openPath(dest)
+        // console.log(files)
+        log.info(files)
+        shell.openPath(dest)
+        mainWindow.webContents.send('image:done')
     }catch(err){
         console.log(err);
+        log.error(err)
     }
 
 }
@@ -183,4 +167,4 @@ const menu =[
     }]:[])
 ]
 
-console.log("Hello! Electron");
+app.allowRendererProcessReuse = true

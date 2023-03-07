@@ -1,11 +1,15 @@
 {
   "name": "image-shrink",
   "version": "1.0.0",
+  "type": "module",
   "description": "App Based on Electron Js To Shrink Images",
-  "main": "main.js",
+  "main": "main.cjs",
   "scripts": {
     "start": "electron .",
     "dev": "nodemon --exec electron .",
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
+    "package-win": "electron-packager . --overwrite --platform=win32 --arch=ia32 --icon=assets/icons/win/icon.ico --prune=false --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"ImageShrink\"",
+    "package-linux": "electron-packager . --overwrite --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=false --out=release-builds",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Naman Kumar",
@@ -13,13 +17,15 @@
   "devDependencies": {
     "@types/imagemin-mozjpeg": "^8.0.1",
     "electron": "^23.1.2",
-    "nodemon": "^2.0.21"
+    "nodemon": "^2.0.21",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.5"
   },
   "dependencies": {
-    "imagemin": "^8.0.1",
-    "imagemin-mozjpeg": "^10.0.0",
-    "imagemin-pngquant": "^9.0.2",
-    "node-fetch": "^2.6.1",
-    "slash": "^5.0.0"
+    "electron-log": "^5.0.0-beta.16",
+    "imagemin": "^7.0.1",
+    "imagemin-mozjpeg": "^8.0.0",
+    "imagemin-pngquant": "^8.0.0",
+    "slash": "^3.0.0"
   }
 }
